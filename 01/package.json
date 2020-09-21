@@ -1,0 +1,19 @@
+{
+  "name": "01",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node test",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.17.1",
+    "yargs": "^16.0.3"
+  },
+  "devDependencies": {
+    "mocha": "8.1.3"
+  }
+}
