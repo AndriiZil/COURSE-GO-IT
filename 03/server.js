@@ -26,6 +26,10 @@ app.get('/weather', (req, res) => {
     res.send({ message: 'get ok' });
 });
 
+app.get('/test', (req, res) => {
+    res.send('Ok');
+})
+
 app.get('/', validateWeatherQuery, async (req, res) => {
     const KEY = process.env.API_WEATHER_KEY;
     const { q: city } = req.query;
