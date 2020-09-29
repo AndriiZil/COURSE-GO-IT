@@ -3,8 +3,8 @@ const logger = require('morgan');
 const axios = require('axios');
 const cors = require('cors');
 
-require('dotenv').config();
 const PORT = process.env.PORT || 3000;
+require('dotenv').config();
 
 const app = express();
 
@@ -19,7 +19,7 @@ const {
 
 // app.use(addCorsHeaders);
 // app.use(allowOriginHeaders);
-app.use(cors());
+app.use(cors({ origin: false }));
 
 app.get('/weather', (req, res) => {
     console.log(req.query);

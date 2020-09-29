@@ -27,6 +27,14 @@ function addCorsHeaders(req, res, next) {
     next();
 }
 
+function setCORSHeaders(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');      
+      next();
+  }
+
 module.exports = {
     validateWeatherQuery,
     allowOriginHeaders,
