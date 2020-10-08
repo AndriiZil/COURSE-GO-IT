@@ -64,7 +64,7 @@ class Server {
     }
 
     initErrorHandler() {
-
+        
     }
 
     startListening() {

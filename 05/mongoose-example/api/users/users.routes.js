@@ -7,14 +7,14 @@ router.post('/', UsersController.createNewUser);
 
 router.get('/', UsersController.getUsers);
 
-router.get('/:userId', UsersController.getUserById);
+router.get('/:userId', UsersController.validateUserId, UsersController.getUserById);
 
-router.patch('/:userId', UsersController.updateUserById);
+router.patch('/:userId', UsersController.validateUserId, UsersController.validateUserUpdate, UsersController.updateUserById);
 
-router.delete('/:userId', UsersController.deleteUser);
+router.delete('/:userId', UsersController.validateUserId, UsersController.deleteUser);
 
-router.patch('/:id/films/add', UsersController.addFilmToUser);
+router.patch('/:userId/films/add', UsersController.validateUserId, UsersController.validateAddFilm, UsersController.addFilmToUser);
 
-router.patch('/:id/films/delete', UsersController.deleteFilmFromUser);
+router.patch('/:userId/films/delete', UsersController.validateUserId, UsersController.deleteFilmFromUser);
 
 module.exports = router;
