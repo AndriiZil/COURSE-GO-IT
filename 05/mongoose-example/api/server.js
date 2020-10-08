@@ -68,10 +68,9 @@ class Server {
     }
 
     startListening() {
-        console.log('SERVER')
         this.server.listen(
             PORT,
-            () => console.log('Server was started.')
+            () => console.log(`Server was started on PORT: ${PORT}`)
         )
     }
 
