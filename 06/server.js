@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const usersRouter = require('./api/users/user.router');
+const filmsRouter = require('./api/films/film.router');
 
 require('dotenv').config();
 
@@ -19,6 +20,7 @@ class Server {
         this.initRoutes();
         await this.initDbConnection();
         this.startListening();
+        this.errorHandler();
     }
 
     initServer() {
@@ -33,10 +35,13 @@ class Server {
 
     initRoutes() {
         this.server.use('/users', usersRouter);
+        this.server.use('/films', filmsRouter);
     }
 
     async initDbConnection() {
         try {
+            mongoose.set('debug', true);
+
             const options = {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
@@ -56,6 +61,15 @@ class Server {
             process.env.PORT,
             () => console.log('Server was started.')
         )
+    }
+
+    errorHandler() {
+        this.server.use((err, req, res, next) => {
+            if (err) {
+                return res.status(400).send({ message: err.message });
+            }
+            next();
+        }) 
     }
 
 }

@@ -1,7 +1,9 @@
 const UserModel = require('./user.model');
+const FilmModel = require('../films/film.model');
 const bcrypt = require('bcryptjs');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
+const { Types: { ObjectId } } = require('mongoose');
 
 class UserController {
 
@@ -49,7 +51,7 @@ class UserController {
                 return res.send({ message: 'Authentication failed.' });
             }
 
-            const token = await jwt.sign({ id: user[0].id, email: user[0].email }, process.env.TOKEN_SECRET, { expiresIn: 60 });
+            const token = await jwt.sign({ id: user[0].id, email: user[0].email }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 
             const updatedUser = await UserModel.findByIdAndUpdate(user[0].id, {
                 token
@@ -63,6 +65,9 @@ class UserController {
 
     async getUsers(req, res, next) {
         try {
+            const name = req.query.name;
+
+            // const users = await UserModel.find(name ? { name } : {}).select('-token');
             const users = await UserModel.find();
 
             return res.send(UserController.validateUserResponse(users));
@@ -105,6 +110,113 @@ class UserController {
         }
     }
 
+    async getCurrentUser(req, res, next) {
+        try {
+            const user = usereq.r;
+
+            console.log(user);
+
+            return res.send(user[0]);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async logout(req, res, next) {
+        try {
+
+            await UserModel.findByIdAndUpdate(req.user[0].id, {
+                token: null
+            }, { new: true });
+
+            return res.send({ message: 'success' });
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async addFilmToUser(req, res, next) {
+        try {
+            const filmId = req.params.id;
+
+            const film = await FilmModel.findById(filmId);
+
+            if (!film) {
+                // return res.status(404).send({ message: 'Film not found' });
+                const error = new Error('Film not found');
+                error.code = 404;
+                throw error;
+            }
+
+            const updatedUser = await UserModel.findByIdAndUpdate(req.user[0].id, {
+                $push: { favouriteFilms: filmId }
+            }, { new: true });
+
+            return res.send(UserController.validateUserResponse([updatedUser]));
+        } catch(err) {
+            next(err);
+        }
+    }
+
+    async removeFilmFromUser(req, res, next) {
+        try {
+            const filmId = req.params.id;
+
+            const film = await FilmModel.findById(filmId);
+
+            if (!film) {
+                return res.status(404).send({ message: 'Film not found' });
+            }
+
+            const updatedUser = await UserModel.findByIdAndUpdate(req.user[0].id, {
+                $pull: { favouriteFilms: filmId }
+            }, { new: true });
+
+            return res.send(UserController.validateUserResponse([updatedUser]));
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async joinFilm(req, res, next) {
+        try {
+            const userId = req.user[0].id;
+
+            console.log(userId);
+
+            const userWithFilms = await UserModel.aggregate([
+                { $match: { _id: ObjectId(userId) } },
+                {
+                    $lookup: {
+                        from: 'films',
+                        localField: 'favouriteFilms',
+                        foreignField: '_id',
+                        as: 'films'
+                    }
+                }
+            ]);
+
+            return res.send(userWithFilms);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async populateFilms(req, res, next) {
+        try {
+            const userWithFilms = await UserModel
+                .findById(req.user[0].id)
+                .populate('favouriteFilms');
+
+            return res.send(userWithFilms);
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
     validateUserCreate(req, res, next) {
         const rulesSchema = Joi.object({
             name: Joi.string().required(),
@@ -130,7 +242,8 @@ class UserController {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                token: user.token
+                token: user.token,
+                filmsIds: user.favouriteFilms ? user.favouriteFilms : []
             }
         });
     }
