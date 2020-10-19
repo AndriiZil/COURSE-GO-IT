@@ -1,0 +1,9 @@
+- https://cloud.google.com/storage/docs/quickstart-console
+- https://cloud.google.com/iam/docs/creating-managing-service-account-keys
+- https://console.cloud.google.com/storage/browser?project=evident-factor-291817&prefix=
+- https://github.com/googleapis/nodejs-storage/blob/master/samples/uploadFile.js
+- https://www.npmjs.com/package/multer
+- https://nodejs.org/api/path.html#path_path_parse_path
+- https://www.npmjs.com/package/imagemin
+- https://nodejs.org/api/fs.html#fs_fs_unlink_path_callback
+- http://www.passportjs.org/packages/
