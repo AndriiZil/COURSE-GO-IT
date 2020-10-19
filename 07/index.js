@@ -8,6 +8,8 @@ const imagemin = require('imagemin');
 const imageminJpegtran = require('imagemin-jpegtran');
 const imageminPngquant = require('imagemin-pngquant');
 
+const { uploadFileToGoogleCloud } = require('./upload-to-google');
+
 const app = express();
 
 app.use(logger('dev'));
@@ -35,6 +37,20 @@ app.post('/form-data', upload.single('file_example'), minifyImage, (req, res) =>
         console.log(err);
     }
 });
+
+app.post('/upload-google', async (req, res) => {
+    try {
+        
+        const bucket = 'goit-segment-storage-example';
+        const filePath = './static/file_example-1603131976026.jpeg';
+
+        const message = await uploadFileToGoogleCloud(bucket, filePath);
+
+        return res.send({ message });
+    } catch(err) {
+        console.log(err);
+    }
+})
 
 /**
  * {
