@@ -21,6 +21,7 @@ describe('Test User Service', () => {
     let sandbox, resObj, reqObj;
 
     describe('User create controller', () => {
+        let stubFindFilmById, stubFindByIdAndUpdate, stubResSendMethod
 
     
         after(() => {
@@ -45,7 +46,21 @@ describe('Test User Service', () => {
         });
     
         beforeEach(() => {
-    
+            stubFindFilmById = sandbox.stub(FilmModel, 'findById').resolves({
+                _id: 'f26ew4a6f1e9rt4hr5tg',
+                name: 'Titanic'
+            });
+
+            stubFindByIdAndUpdate = sandbox.stub(UserModel, 'findByIdAndUpdate').resolves({
+                id: '6rt5gd23fg2e6f2gs3d2s',
+                name: 'User',
+                email: 'example@mail.com',
+                token: 'jwt6ergf5sd3c2a6sd59f2erfs2df.6d5f6s5dfs6d5f6s.5d4f6a5d5a6sd5as56a'
+            });
+
+            stubResSendMethod = sandbox.stub(resObj, 'send').returns({
+                status: 200
+            });
         });
     
         afterEach(() => {
@@ -69,22 +84,6 @@ describe('Test User Service', () => {
 
             const filmId = '32asd6as45d2a6sdar4gd6';
 
-            const stubFindFilmById = sandbox.stub(FilmModel, 'findById').resolves({
-                _id: 'f26ew4a6f1e9rt4hr5tg',
-                name: 'Titanic'
-            });
-
-            const stubFindByIdAndUpdate = sandbox.stub(UserModel, 'findByIdAndUpdate').resolves({
-                id: '6rt5gd23fg2e6f2gs3d2s',
-                name: 'User',
-                email: 'example@mail.com',
-                token: 'jwt6ergf5sd3c2a6sd59f2erfs2df.6d5f6s5dfs6d5f6s.5d4f6a5d5a6sd5as56a'
-            });
-
-            const stubResSendMethod = sandbox.stub(resObj, 'send').returns({
-                status: 200
-            });
-
             const result = await UserController.addFilmToUser(reqObj, resObj, () => {});
 
             expect(result).to.deep.equal({ status: 200 });
@@ -100,18 +99,7 @@ describe('Test User Service', () => {
             try {
                 const filmId = '32asd6as45d2a6sdar4gd6';
 
-                const stubFindFilmById = sandbox.stub(FilmModel, 'findById').resolves(null);
-    
-                const stubFindByIdAndUpdate = sandbox.stub(UserModel, 'findByIdAndUpdate').resolves({
-                    id: '6rt5gd23fg2e6f2gs3d2s',
-                    name: 'User',
-                    email: 'example@mail.com',
-                    token: 'jwt6ergf5sd3c2a6sd59f2erfs2df.6d5f6s5dfs6d5f6s.5d4f6a5d5a6sd5as56a'
-                });
-    
-                const stubResSendMethod = sandbox.stub(resObj, 'send').returns({
-                    status: 200
-                });
+                stubFindFilmById = sandbox.stub(FilmModel, 'findById').resolves(null);
     
                 await UserController.addFilmToUser(reqObj, resObj, () => {});
             } catch(err) {
