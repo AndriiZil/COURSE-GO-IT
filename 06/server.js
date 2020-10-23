@@ -19,7 +19,7 @@ class Server {
         this.initMiddleware();
         this.initRoutes();
         await this.initDbConnection();
-        this.startListening();
+        return this.startListening();
         this.errorHandler();
     }
 
@@ -57,7 +57,7 @@ class Server {
     }
 
     startListening() {
-        this.server.listen(
+        return this.server.listen(
             process.env.PORT,
             () => console.log('Server was started.')
         )
