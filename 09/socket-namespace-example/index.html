@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+    <script>
+        let socket = io('/admins');
+
+        socket.on('message', (message) => {
+            console.log('Message from server: ', message);
+        })
+
+        socket.on('private message', (message) => {
+            console.log('Private message from the server ', message)
+        })
+
+        function sendMessageToServer() {
+            socket.emit('message', `${new Date().toISOString()}`)
+        }
+    </script>
+    <title>Socket IO</title>
+</head>
+<body>
+    <h2>Chat</h2>
+
+    <button onclick="sendMessageToServer()">
+        Send message to the server
+    </button>
+</body>
+</html>

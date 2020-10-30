@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+    <title>WebSockets</title>
+
+</head>
+<body>
+    <h2>Chat</h2>
+
+    <script>
+        const localMessages = [];
+
+        axios.get('http://localhost:3000/messages')
+            .then(({ data }) => localMessages = data.messages);
+
+        const updateMessages = () => {
+            axios.get('http://localhost:3000/messages')
+                .then(({ data }) => {
+                    console.log('Messages ', data.messages);
+
+                    const difference = data.messages.splice(localMessages.length);
+
+                    console.log('difference', difference);
+
+                    difference.forEach(message => {
+                        console.log(message);
+                        localMessages.push(message);
+                    });
+                })
+                .catch(e => console.log(e));
+        }
+
+        setInterval(updateMessages, 200); // every 200ms
+
+    </script>
+</body>
+</html>
